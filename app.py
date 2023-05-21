@@ -9,20 +9,20 @@ import plotly.graph_objects as go
 
 @st.cache_data(persist=True)
 def load_data():
-    df_2022 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2022berkeley.csv')
-    df_2021 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2021berkeley.csv')
-    df_2020 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2020berkeley.csv')
-    df_2019 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2019berkeley.csv')
-    df_2018 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2018berkeley.csv')
+    df_2022 = pd.read_csv('2022berkeley.csv')
+    df_2021 = pd.read_csv('2021berkeley.csv')
+    df_2020 = pd.read_csv('2020berkeley.csv')
+    df_2019 = pd.read_csv('2019berkeley.csv')
+    df_2018 = pd.read_csv('2018berkeley.csv')
     return df_2022, df_2021, df_2020,df_2019, df_2018
 
 @st.cache_data(persist=True)
 def load_data_la():
-    df_2022 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2022ucla.csv')
-    df_2021 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2021ucla.csv')
-    df_2020 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2020ucla.csv')
-    df_2019 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2019ucla.csv')
-    df_2018 = pd.read_csv('/Users/ayumuueda/Desktop/tbm/2018ucla.csv')
+    df_2022 = pd.read_csv('2022ucla.csv')
+    df_2021 = pd.read_csv('2021ucla.csv')
+    df_2020 = pd.read_csv('2020ucla.csv')
+    df_2019 = pd.read_csv('2019ucla.csv')
+    df_2018 = pd.read_csv('2018ucla.csv')
     return df_2022, df_2021, df_2020,df_2019, df_2018
 
 def one_year_graph(majors, df, years, value):
@@ -217,4 +217,6 @@ elif options == 'Visualize the data':
         elif school == 'UC Berkeley':
             main(year_df_mapping)
    
+
+
 
