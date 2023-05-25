@@ -6,6 +6,7 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
+st.set_page_config(page_title="University of California Transfer Statistics Visualization")
 
 @st.cache_data(persist=True)
 def load_data():
