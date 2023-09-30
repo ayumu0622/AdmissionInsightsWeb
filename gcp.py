@@ -7,19 +7,22 @@ client = bigquery.Client(credentials=credentials)
 
 def run_query(year_list, major_list, school):
     job_config = bigquery.QueryJobConfig(
-    query_parameters=[
-        bigquery.ArrayQueryParameter("year", "INT64", year_list), 
+    query_parameters=[ 
         bigquery.ArrayQueryParameter("major", "STRING", major_list),
-        ])
+        bigquery.ArrayQueryParameter("year", "INT64", year_list),
+        ]
+        )
+            
     if school == "UC Berkeley":
         query = f"""
                 SELECT *
                 FROM `tidal-beacon-349306.ucstatistic.with_column_berkekey`
-                WHERE year in UNNEST(@year)
-                AND Major_name in UNNEST(@major)
-            """
+                WHERE Major_name IN UNNEST(@major)
+                AND year IN UNNEST(@year)
+                """
     query_job = client.query(query, job_config=job_config)
     return query_job.to_dataframe()
+
 
 def get_the_all_major(school):
     

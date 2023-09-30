@@ -9,7 +9,8 @@ from gcp import *
 from graph import *
 
 statistic_option = ["Admit_GPA_range","Admit_rate","Enroll_GPA_range","Yield_rate","Admits","Applicants","Enrolls"]
-year_option = [2018, 2019, 2020, 2021, 2022]
+year_option = ["2018", "2019", "2020", "2021", "2022"]
+cache = {}
 
 class Manipulate:
     
@@ -22,10 +23,7 @@ class Manipulate:
         self.data = None
     
     def sql_method(self):
-        self.data = run_query(year_list = self.year,
-                              major_list = self.major,
-                              school = self.school)
-        self.data = self.data[self.statistic]
+        self.data = run_query(year_list = self.year, major_list = self.major, school = self.school)
     
     def visualize(self):
 
@@ -41,6 +39,13 @@ class Manipulate:
         elif (('Enroll GPA range' == self.statistic) or ('Admit GPA range' == self.statistic)) and (len(self.year)>1):
             for year in self.year:
                 range_viz(self.major, self.data, year, self.statistic)
+    
+    def get_data(self):
+        return self.data
+    
+    def get_majors(self):
+        return self.major
+
 
 st.set_page_config(page_title="University of California Transfer Statistics Visualization")
 st.header("UC Transfer Analyzer")
@@ -53,16 +58,28 @@ option = st.sidebar.selectbox("Choose what to do", ("Check the table data", "See
 
 if option == "Check the table data":
    year_time = st.sidebar.radio("year", year_option, key='year')
-   major_list = list(get_the_all_major(school)["Major_name"])
-   viz_instance = Manipulate(school, year_time, major_list, None, False)
-   viz_instance.sql_method()
-#    st.write(viz_instance.data) 
-#    st.divider()
 
+   if school in cache.keys():
+       major_list = cache[school]
+   else:
+       major_list = list(get_the_all_major(school)["Major_name"])
+       cache[school] = major_list
+
+   viz_instance = Manipulate(school, [year_time], major_list, statistic_option, False)
+   viz_instance.sql_method()
+   st.write(viz_instance.data) 
+   st.divider()
+
+#From here
 elif option == 'See the trend':
     years = st.sidebar.multiselect("Choose years", year_option)
     values = st.sidebar.multiselect("Choose Statistic", statistic_option)
-    major_list = list(get_the_all_major(school)["Major_list"])
+    
+    if school in cache.keys():
+       major_list = cache[school]
+    else:
+       major_list = list(get_the_all_major(school)["Major_name"])
+
     majors = st.sidebar.multiselect("Choose majors", (major_list))
     viz_instance = Manipulate(school, years, majors, statistic_option, False)
     viz_instance.sql_method()
