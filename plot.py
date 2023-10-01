@@ -6,6 +6,28 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from get_data_gcp import run_query
+import pickle
+
+def first_q(col):
+    return float(col[0:4])
+
+def third_q(col):
+    return float(col[7:])
+
+def transform(df):
+    
+    df["25th admit"] = df["Admit_GPA_range"].apply(first_q)
+    df["25th enroll"] = df["Enroll_GPA_range"].apply(first_q)
+    df["75th admit"] = df["Admit_GPA_range"].apply(third_q)
+    df["75th enroll"] = df["Enroll_GPA_range"].apply(third_q)
+    df["approx median admit"] = (df["25th admit"] + df["75th admit"]) / 2
+    df["approx median Enroll"] = (df["25th enroll"] + df["75th enroll"]) / 2
+
+    df = df.drop(["25th admit","25th enroll", "75th admit", "75th enroll", "approx median admit", "Enrolls"], axis=1)
+    df = df.drop(["Admit_GPA_range","Enroll_GPA_range"], axis = 1)
+
+    df = df[['Admit_rate', 'Yield_rate', 'Admits', 'Applicants', 'approx median Enroll']]
+    return df
 
 def one_year_graph(majors, df, years, value):
 
@@ -90,29 +112,86 @@ def range_viz(majors, df, year, value):
     st.subheader(str(year)+' '+value)
     st.write(fig)
 
-def line_plot_for_multiple(mapping, majors, years, value): 
-    
+def line_plot_for_multiple(mapping, majors, years, value, trendline): 
+    years = sorted(years)
     multiple_dict = {}
     for maj in majors:
         multiple_value = []
-        for tt in years:
-            frame = mapping[mapping['year'] == tt]
+        for t in years:
+            frame = mapping[mapping['year'] == t]
             try:
                 multiple_value.append(frame.loc[frame['Major_name'] == maj,value].to_list()[0])
             except:
                 multiple_value.append(0)
-
         multiple_dict[maj] = multiple_value
-    
-    str_years = [str(x) for x in sorted(years)]
+    #multiple_dict is like {"data science", [2, 3, 4]}
+
     fig = go.Figure()
-    for key, new_value in multiple_dict.items():
-        fig.add_trace(go.Scatter(x=str_years, y=new_value,
-                    mode='lines',
-                    name=key))
+    df = pd.DataFrame(multiple_dict)
+    df["year"] = [str(x) for x in years]
+
+    if trendline == True:
+        fig = px.scatter(df, x="year", y=list(multiple_dict.keys()), trendline='ols')
+    else:
+        fig = px.scatter(df, x="year", y=list(multiple_dict.keys()))
+
+    fig.update_traces(marker=dict(size=10,
+                                line=dict(width=2,
+                                            color='DarkSlateGrey')),
+                    selector=dict(mode='markers'))
+    
     fig.update_layout(title=' vs '.join(majors))
     
     st.subheader(str(np.min(years)) + ' - ' +str(np.max(years)) +' '+value)
+
+    st.write(fig)
+    st.divider()
+
+def plot_for_predict(data, majors, years, stat, trendline):
+
+    with open('models/ridge_berk_pkl' , 'rb') as f:
+        model = pickle.load(f)
+    
+    years = sorted(years)
+    multiple_dict = {}
+    for maj in majors:
+        multiple_value = []
+        df = data[data['year'] != 2022]
+        df = df[df['Major_name'] == maj]
+        df = df.sort_values(by=['year'])
+        try:
+            multiple_value.extend(df["Admit_rate"].to_list())
+        except:
+            multiple_value.extend([0.0] * len(years))
+        
+        features = transform(data[data['year'] == 2022])
+        predicted = model.predict(features)
+        predicted = predicted[0]
+        multiple_value.append(predicted)
+
+        while(len(multiple_value) < len(years)):
+            multiple_value.insert(0, 0.0)
+
+        multiple_dict[maj] = multiple_value
+    #multiple_dict is like {"data science", [2, 3, 4]}
+
+    fig = go.Figure()
+    df = pd.DataFrame(multiple_dict)
+    df["year"] = [str(x) for x in years]
+
+    # if trendline == True:
+    #     fig = px.scatter(df, x="year", y=list(multiple_dict.keys()), trendline='ols')
+    # else:
+    #     fig = px.scatter(df, x="year", y=list(multiple_dict.keys()))
+    fig = px.scatter(df, x="year", y=list(multiple_dict.keys()), trendline='ols')
+    fig.update_traces(marker=dict(size=10,
+                                line=dict(width=2,
+                                            color='DarkSlateGrey')),
+                    selector=dict(mode='markers'))
+    
+    fig.update_layout(title=' vs '.join(majors))
+    
+    st.subheader(str(np.min(years)) + ' - ' +str(np.max(years)) +' '+ "Admit rate")
 
     st.write(fig)
     st.divider()

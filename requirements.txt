@@ -6,3 +6,4 @@ streamlit==1.22.0
 google-cloud-bigquery==3.11.4
 protobuf==3.20.3
 db-dtypes
+seaborn
