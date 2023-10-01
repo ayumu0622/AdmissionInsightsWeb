@@ -1,39 +1,23 @@
-import streamlit as st
-from difflib import SequenceMatcher
+from app import *
 import pandas as pd
-import numpy as np
-import plotly.express as px
-import matplotlib.pyplot as plt
 import plotly.graph_objects as go
-from gcp import run_query
+#From here
+df = pd.read_csv("/Users/ayumuueda/Desktop/UC-Transfer-Analyzer/data/berkeley_table.csv")
+years = [2021, 2022, 2019]
+values = ["Admit_GPA_range","Admit_rate","Enroll_GPA_range","Yield_rate","Admits","Applicants","Enrolls"]
+major_list = df['Major name'].to_list()
 
-def one_year_graph(majors, df, years, value):
 
-   value_list = []
-   
-   for maj in majors:
-      try:
-        value_list.append(df.loc[df['Major name'] == maj, value].tolist()[0])
-      except:
-        value_list.append(0)
-        st.title('Invalid value detected!!')
-
-   fig = px.bar(x = majors, y = value_list, width=500, height=600)
-   fig.update_layout(title = ' vs '.join(majors), yaxis_title=value)
-   st.subheader(str(years)+' '+value)
-   st.write(fig)
 
 def range_viz(majors, df, year, value):
 
     lower_list = []
     upper_list = []
-
     for maj in majors:
-
         try:
             if df.loc[df['Major name'] == maj,value].tolist()[0] != 'masked':
-                lower = float(df.loc[df['Major name'] == maj,value].tolist()[0][0:4])
-                upper = float(df.loc[df['Major name'] == maj,value].tolist()[0][7:]) 
+                lower = float(df.loc[df['Major name'] == maj, value].tolist()[0][0:4])
+                upper = float(df.loc[df['Major name'] == maj, value].tolist()[0][7:]) 
                 lower_list.append(lower)
                 upper_list.append(upper)
             else:
@@ -87,34 +71,13 @@ def range_viz(majors, df, year, value):
     fig.update_layout(title = ' vs '.join(majors),
                     showlegend = False)
     
-    st.subheader(str(year)+' '+value)
-    st.write(fig)
-
-def line_plot_for_multiple(mapping, majors, years, value): 
     
-    multiple_dict = {}
+    fig.show()
 
-    for maj in majors:
-        multiple_value = []
-        for tt in years:
-            frame = mapping[tt]
-            try:
-                multiple_value.append(frame.loc[frame['Major name'] == maj,value].to_list()[0])
-            except:
-                multiple_value.append(0)
 
-        multiple_dict[maj] = multiple_value
-    
-    str_years = [str(x) for x in sorted(years)]
-    fig = go.Figure()
-    for key, new_value in multiple_dict.items():
-        fig.add_trace(go.Scatter(x=str_years, y=new_value,
-                    mode='lines',
-                    name=key))
-    
-    fig.update_layout(title=' vs '.join(majors))
-    
-    st.subheader(str(np.min(years)) + ' - ' +str(np.max(years)) +' '+value)
+for year in years:
+    range_viz(major_list[0:2], df[df['year'] == year], year, "Enroll GPA range")
 
-    st.write(fig)
-    st.divider()
+
+# df = df[df['year'] == 2021]
+# print(df.loc[df['Major name'] == 'Environmental economics & policy (l&S)', "Enroll GPA range"].tolist()[0] != 'masked')

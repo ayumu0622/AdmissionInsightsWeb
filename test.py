@@ -1,4 +1,4 @@
-from updated_app import Manipulate, get_the_all_major
+from app import Manipulate, get_the_all_major
 # school = "UC Berkeley"
 # year_time = ["2021", "2022"]
 # major_list = list(get_the_all_major(school)["Major_name"])
@@ -14,7 +14,8 @@ school = "UC Berkeley"
 option = "Check the table data"
 
 if option == "Check the table data":
-   year_time = ["2022"]
+   # year_time = [[str(i) for i in range(2012, 2022)][0]]
+   year_time = [i for i in range(2012, 2023)]
    major_list = list(get_the_all_major(school)["Major_name"])
    viz_instance = Manipulate(school, year_time, major_list, statistic_option, False)
    viz_instance.sql_method()

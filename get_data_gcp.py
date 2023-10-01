@@ -6,6 +6,7 @@ credentials = service_account.Credentials.from_service_account_info( st.secrets[
 client = bigquery.Client(credentials=credentials)
 
 def run_query(year_list, major_list, school):
+    # year_list = [int(i) for i in year_list]
     job_config = bigquery.QueryJobConfig(
     query_parameters=[ 
         bigquery.ArrayQueryParameter("major", "STRING", major_list),
@@ -16,7 +17,7 @@ def run_query(year_list, major_list, school):
     if school == "UC Berkeley":
         query = f"""
                 SELECT *
-                FROM `tidal-beacon-349306.ucstatistic.with_column_berkekey`
+                FROM `tidal-beacon-349306.ucstatistic.berkeley_2012_2022` 
                 WHERE Major_name IN UNNEST(@major)
                 AND year IN UNNEST(@year)
                 """
@@ -29,7 +30,7 @@ def get_the_all_major(school):
     if school == "UC Berkeley":
         query_text = f"""
                 SELECT Major_name
-                FROM `tidal-beacon-349306.ucstatistic.with_column_berkekey`
+                FROM `tidal-beacon-349306.ucstatistic.berkeley_2012_2022` 
                 WHERE year = 2022
             """
     query_job = client.query(query_text)
