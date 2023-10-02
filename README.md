@@ -3,7 +3,7 @@
 
 ## Overview
 
-Welcome to the UC Transfer Admission Stats Visualization Web App repository! This project focuses on visualizing UC Transfer statistics, specifically admit rates and enrollment numbers, categorized by majors. The web app can be accessed [here](https://uc-transfer-admission-stats-visualization-tool.streamlit.app).
+Welcome to the UC Transfer Admission Stats Visualization Web App repository! This project focuses on visualizing UC Transfer statistics, specifically admit rates and enrollment numbers, categorized by majors. The web app can be accessed [here](https://university-of-california-admittion-insights.streamlit.app/).
 
 ## Data Source
 
@@ -23,15 +23,7 @@ The motivation behind this web app stems from my own experience navigating throu
 
 ## Web App
 
-Explore the web app [here](https://uc-transfer-admission-stats-visualization-tool.streamlit.app). It offers an intuitive interface for gaining insights into admission trends for different majors.
-
-## Usage
-
-To run the project locally, follow these steps:
-
-1. Clone the repository: `git clone https://github.com/ayumu0622/UC-Transfer-Analyzer.git`
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run the web app: `streamlit run app.py`
+Explore the web app [here](https://university-of-california-admittion-insights.streamlit.app/). It offers an intuitive interface for gaining insights into admission trends for different majors.
 
 ## Conclusion
 
