@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 from get_data_gcp import *
 from plot import *
 
-statistic_option = ["Admit_GPA_range","Admit_rate","Enroll_GPA_range","Yield_rate","Admits","Applicants","Enrolls"]
+statistic_option = ["Admit_GPA_range", "Admit_rate", "Enroll_GPA_range", "Yield_rate","Admits","Applicants","Enrolls"]
 year_option = list(range(2012, 2023))
 cache = {}
 
@@ -53,11 +53,11 @@ class Manipulate:
         return self.data[self.data["year"].isin(yr)]
 
 st.set_page_config(page_title="University of California Transfer Statistics Visualization")
-st.header("UC Transfer Analyzer")
-st.caption("Welcome to our UC Transfer Insights web app! Discover transfer data and visualizations for UC majors sourced from the official Transfer by Major information provided by the University of California. Explore key findings, interactive tables, charts, and graphs. Easily compare transfer rates across majors. Gain insights and make informed decisions. Data sourced from the University of California. Visit https://www.universityofcalifornia.edu/about-us/information-center/transfers-major for more details.")
+st.header("TransferInsight UC")
+st.caption("Welcome to my UC Transfer Insights web app! Discover transfer data and visualizations for UC majors sourced from the official Transfer by Major information provided by the University of California. Explore key findings, interactive tables, charts, and graphs. Easily compare transfer rates across majors. Gain insights and make informed decisions. Data sourced from the University of California. Visit https://www.universityofcalifornia.edu/about-us/information-center/transfers-major for more details.")
 st.divider()
 
-st.sidebar.header("UC Transfer Analyzer")
+st.sidebar.header("TransferInsight UC")
 school = st.sidebar.selectbox("School", ("UC Berkeley", "UCLA"))
 option = st.sidebar.selectbox("choose what to do", ("check the table data", "visualize the data", "predict future acceptance rate"))
 
@@ -110,3 +110,4 @@ elif option == 'predict future acceptance rate':
 
     if st.sidebar.button('predict', key='predict'):
         viz_instance.predict()
+        

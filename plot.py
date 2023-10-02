@@ -154,6 +154,7 @@ def plot_for_predict(data, majors, years, stat, trendline):
     
     years = sorted(years)
     multiple_dict = {}
+    
     for maj in majors:
         multiple_value = []
         df = data[data['year'] != 2022]
@@ -164,7 +165,9 @@ def plot_for_predict(data, majors, years, stat, trendline):
         except:
             multiple_value.extend([0.0] * len(years))
         
-        features = transform(data[data['year'] == 2022])
+        x_test = data[data['year'] == 2022]
+        x_test = x_test[x_test["Major_name"] == maj]
+        features = transform(x_test)
         predicted = model.predict(features)
         predicted = predicted[0]
         multiple_value.append(predicted)
@@ -173,25 +176,24 @@ def plot_for_predict(data, majors, years, stat, trendline):
             multiple_value.insert(0, 0.0)
 
         multiple_dict[maj] = multiple_value
-    #multiple_dict is like {"data science", [2, 3, 4]}
 
     fig = go.Figure()
     df = pd.DataFrame(multiple_dict)
     df["year"] = [str(x) for x in years]
 
-    # if trendline == True:
-    #     fig = px.scatter(df, x="year", y=list(multiple_dict.keys()), trendline='ols')
-    # else:
-    #     fig = px.scatter(df, x="year", y=list(multiple_dict.keys()))
-    fig = px.scatter(df, x="year", y=list(multiple_dict.keys()), trendline='ols')
+    # fig = px.scatter(df, x="year", y=list(multiple_dict.keys()))
+    fig = px.line(df, x='year', y=list(multiple_dict.keys()), markers=True)
     fig.update_traces(marker=dict(size=10,
                                 line=dict(width=2,
                                             color='DarkSlateGrey')),
                     selector=dict(mode='markers'))
-    
+    for key, item in multiple_dict.items():
+        fig.add_annotation(x=2022, y=item[10],
+            text="prediction",
+            showarrow=False,
+            yshift=10)
     fig.update_layout(title=' vs '.join(majors))
     
     st.subheader(str(np.min(years)) + ' - ' +str(np.max(years)) +' '+ "Admit rate")
-
     st.write(fig)
     st.divider()
