@@ -7,4 +7,6 @@ google-cloud-bigquery==3.11.4
 protobuf==3.20.3
 db-dtypes
 seaborn
-statsmodels==0.4.0
+statsmodels
+scikit-learn
+
